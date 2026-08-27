@@ -40,7 +40,7 @@ Creator Palette declares no extra Python packages. The required runtime librarie
 ### ComfyUI Manager — recommended
 
 1. Open **Manager** in ComfyUI.
-2. Search for **MiniMax H3 Creator Palette**.
+2. Search for **Search for H3 Creator Palette.**.
 3. Click **Install**.
 4. Restart ComfyUI and hard-refresh the browser with **Ctrl+F5**.
 
@@ -63,7 +63,7 @@ Extract the release so the extension has this shape:
 ```text
 ComfyUI/
 └── custom_nodes/
-    └── ComfyUI-MiniMax-Creator-Palette/
+    └── ComfyUI-H3-Creator-Palette/
         ├── __init__.py
         ├── creator_node.py
         ├── pyproject.toml
@@ -249,7 +249,7 @@ Before reporting a problem:
 1. Update ComfyUI and Creator Palette.
 2. Restart ComfyUI completely.
 3. Hard-refresh the browser with **Ctrl+F5**.
-4. Confirm the folder is named `ComfyUI-MiniMax-Creator-Palette`.
+4. Confirm the folder is named `ComfyUI-H3-Creator-Palette.`.
 5. Reproduce the issue in a new workflow when possible.
 6. Check the browser console and ComfyUI log for the first relevant error.
 
