@@ -38,5 +38,6 @@ wildcards_config.json
 release/
 release-*/
 output/
+assets/
 tmp/
 temp/
