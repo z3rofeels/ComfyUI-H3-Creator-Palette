@@ -1,4 +1,5 @@
-![MiniMax H3 Creator Palette by z3rofeels](assets/zf-h3-creator-palette-banner.svg)
+<img width="1915" height="821" alt="zf-h3-creator-palette-banner" src="https://github.com/user-attachments/assets/4ddb0e03-493e-4b70-8e4f-12004c076cdd" />
+
 
 # MiniMax H3 Creator Palette
 
