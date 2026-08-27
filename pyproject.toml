@@ -1,13 +1,21 @@
 [project]
 name = "zf-h3-creator-palette"
 version = "3.14.1"
-description = "A local MiniMax H3 creation workspace for ComfyUI with Prompt Palette authoring, Cast, references, timeline direction, LoRAs, PreStage, sampling and output."
+description = "A local MiniMax H3 creation workspace for ComfyUI with visual prompt authoring, Cast, references, timeline direction, LoRAs, PreStage, sampling, and output tools."
 license = { file = "LICENSE" }
 requires-python = ">=3.10"
 dependencies = []
 readme = "README.md"
 authors = [{ name = "z3rofeels" }]
-keywords = ["comfyui", "minimax", "h3", "video", "prompt-palette"]
+keywords = [
+  "comfyui",
+  "minimax",
+  "h3",
+  "video",
+  "creator-palette",
+  "prompt-editor",
+]
+
 classifiers = [
   "Development Status :: 4 - Beta",
   "Operating System :: OS Independent",
@@ -27,7 +35,7 @@ Documentation = "https://github.com/z3rofeels/ComfyUI-H3-Creator-Palette#readme"
 
 [tool.comfy]
 PublisherId = "z3rofeels"
-DisplayName = "MiniMax H3 Creator Palette"
-Icon = "https://raw.githubusercontent.com/z3rofeels/ComfyUI-MiniMax-Creator-Palette/main/assets/zf-h3-creator-palette-icon.svg"
-Banner = "https://raw.githubusercontent.com/z3rofeels/ComfyUI-MiniMax-Creator-Palette/main/assets/zf-h3-creator-palette-icon.png"
+DisplayName = "H3 Creator Palette"
+Icon = "https://raw.githubusercontent.com/z3rofeels/ComfyUI-H3-Creator-Palette/main/assets/zf-h3-creator-palette-icon.png"
+Banner = "https://raw.githubusercontent.com/z3rofeels/ComfyUI-H3-Creator-Palette/main/assets/zf-h3-creator-palette-banner.png"
 requires-comfyui = ">=0.34.0"
