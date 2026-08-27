@@ -20,14 +20,14 @@ classifiers = [
 ]
 
 [project.urls]
-Repository = "https://github.com/z3rofeels/ComfyUI-MiniMax-Creator-Palette"
-Documentation = "https://github.com/z3rofeels/ComfyUI-MiniMax-Creator-Palette#readme"
-"Bug Tracker" = "https://github.com/z3rofeels/ComfyUI-MiniMax-Creator-Palette/issues"
+Repository = "https://github.com/z3rofeels/ComfyUI-H3-Creator-Palette"
+Documentation = "https://github.com/z3rofeels/ComfyUI-H3-Creator-Palette#readme"
+"Bug Tracker" = "https://github.com/z3rofeels/ComfyUI-H3-Creator-Palette/issues"
 "Prompt Palette" = "https://github.com/z3rofeels/comfyui-promptpalette"
 
 [tool.comfy]
 PublisherId = "z3rofeels"
 DisplayName = "MiniMax H3 Creator Palette"
 Icon = "https://raw.githubusercontent.com/z3rofeels/ComfyUI-MiniMax-Creator-Palette/main/assets/zf-h3-creator-palette-icon.svg"
-Banner = "https://raw.githubusercontent.com/z3rofeels/ComfyUI-MiniMax-Creator-Palette/main/assets/zf-h3-creator-palette-banner.svg"
+Banner = "https://raw.githubusercontent.com/z3rofeels/ComfyUI-MiniMax-Creator-Palette/main/assets/zf-h3-creator-palette-icon.png"
 requires-comfyui = ">=0.34.0"
