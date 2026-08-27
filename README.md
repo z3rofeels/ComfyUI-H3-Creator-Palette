@@ -51,7 +51,7 @@ Publisher: **z3rofeels**
 
 ```bash
 cd ComfyUI/custom_nodes
-git clone https://github.com/z3rofeels/ComfyUI-MiniMax-Creator-Palette.git
+git clone https://github.com/z3rofeels/ComfyUI-H3-Creator-Palette
 ```
 
 Restart ComfyUI and hard-refresh the browser.
