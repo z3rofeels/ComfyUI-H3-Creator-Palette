@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Prompt Palette issues
+    url: https://github.com/z3rofeels/comfyui-promptpalette/issues
+    about: Use the Prompt Palette repository for bugs in the separate Prompt Palette node.
+  - name: ComfyUI issues
+    url: https://github.com/Comfy-Org/ComfyUI/issues
+    about: Use ComfyUI for core or frontend issues that reproduce without Creator Palette.

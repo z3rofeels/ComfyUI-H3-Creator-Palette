@@ -1,0 +1,483 @@
+"""The finished piece, written part by part into one mp4.
+
+A render is several generations played end to end, and until now they were
+*concatenated* to become one: `MiniMaxH3TimelineJoin` folded the passes
+pairwise and the save node was handed the single tensor that came out. That
+fold is the most expensive thing in a long timeline, and not by a little.
+
+Every intermediate of a pairwise fold is a node output, and ComfyUI keeps node
+outputs for the whole execution — so the running totals all stay alive at once.
+A 768p frame is 12.4 MB of float32 and a 124-frame pass is 1.5 GB, which makes
+ten passes about 81 GB of intermediates on top of the 15 GB of passes. It is
+O(N^2) in the length of the piece. Worse, the default cache
+(`RAMPressureCache`) evicts current-generation entries over 512 MB when memory
+runs short, and re-running an evicted join means re-running what fed it, which
+upstream of a join is a KSampler.
+
+Nothing about a video file needs that. An mp4 is written frame by frame, so the
+parts only ever have to be *reachable in order* — never adjacent in memory, and
+never all at once. So the passes are collected into a reel (`MiniMaxH3Reel`, a
+list of parts that copies nothing) and this module walks it, encoding each part
+into one open container. No concatenation buffer, and no pass resident either:
+each one was written to disk as it decoded and is read back a frame at a time.
+
+Ours rather than core's `VideoFromComponents.save_to`, which this is otherwise
+a close copy of: that one takes a single tensor, so using it would mean
+building the very thing this exists to avoid. Writing the container here also
+retires the CRF version gate — `save_to` only learned `crf` in ComfyUI 0.29 and
+the save node had to refuse a quality setting it could not honour on anything
+older. This one always can.
+
+Every part is a file, and neither kind is ever held whole.
+
+A **generated pass** was decoded, trimmed and written out by `spill.py`, and
+comes through as 8-bit frames on disk that this module memmaps and hands to the
+encoder one at a time. That is what stops a pass from having to stay in memory
+from its own decode until the save node runs — a minute of 768p video is 18 GB
+of float32, and the passes all overlap in time because the file is written from
+all of them at the end.
+
+A **supplied clip** is a file the user brought, and is never decoded at all. At
+12.4 MB a frame, materialising two minutes of someone's mp4 so the encoder has
+something to re-encode would cost 35 GB to say nothing; it is demuxed,
+conformed and re-encoded a frame at a time into the same streams instead, so a
+five-minute clip costs what a five-second one does. What the *seams* need out
+of either kind — a first frame, a last feathered run — is a separate bounded
+read that never comes through here.
+
+The audio is written part by part too, and each part's soundtrack is held to
+its own picture's length. That is not tidiness: the parts are laid end to end,
+so a part whose sound runs short by 30 ms does not lose 30 ms, it shifts
+everything after it by 30 ms and the drift accumulates down the reel. Sound is
+padded with silence or cut to fit, and only ever by the rounding between a
+frame count and a sample count.
+"""
+
+import json
+from dataclasses import dataclass
+from fractions import Fraction
+
+import numpy as np
+import torch
+
+from . import spill
+
+# The layouts PyAV names, by channel count. Anything else is refused rather
+# than guessed at: picking a layout decides which speaker each channel goes to.
+_LAYOUTS = {1: "mono", 2: "stereo", 6: "5.1"}
+
+# How much sound is handed to the encoder at once. Long enough that the call
+# overhead is nothing, short enough that a ten-minute soundtrack is never
+# converted to a numpy array in one piece.
+_AUDIO_CHUNK_S = 1.0
+
+
+class MuxError(ValueError):
+    """The parts of a reel cannot be written as one file."""
+
+
+def decode_sample_rate(vae):
+    """The rate an audio VAE's decoder outputs at.
+
+    Same two attributes core reads in `VAEDecodeAudio`, in the same order —
+    the H3 audio VAE is a 48 kHz Oobleck today, but which rate a checkpoint
+    decodes at is a property of the weights and not a number to hard-code.
+    """
+    return int(getattr(vae, "audio_sample_rate_output",
+                       getattr(vae, "audio_sample_rate", 44100)))
+
+
+def decode_channels(vae):
+    """How many channels that decoder produces. Stereo unless it says otherwise."""
+    return int(getattr(vae, "output_channels", 2))
+
+
+def is_clip(part):
+    """Whether a reel part is footage to splice rather than a pass to play back.
+
+    Supplied footage arrives as a path and a window and is re-encoded straight
+    into the container — see `_write_clip`. A generated pass arrives as
+    `spill.py`'s 8-bit frames, which are already in the encoder's own currency
+    and only have to be read in order — see `_write_pass`.
+    """
+    return "clip" in part
+
+
+def _geometry(part):
+    if is_clip(part):
+        # A clip is scaled to the canvas on the way in, so what it will be is
+        # what the graph told it to be — there is nothing decoded yet to measure.
+        return int(part["clip"]["width"]), int(part["clip"]["height"])
+    return int(part["pass"]["width"]), int(part["pass"]["height"])
+
+
+def reel_geometry(parts):
+    """(width, height) of a reel, refusing one whose parts disagree.
+
+    The timeline pins one canvas across every pass precisely so this cannot
+    happen — this is the check the pairwise join used to make, kept because it
+    is the one that says something went wrong upstream rather than that the
+    encoder is unhappy.
+    """
+    if not parts:
+        raise MuxError("nothing to save: the reel is empty")
+    width, height = _geometry(parts[0])
+    for index, part in enumerate(parts[1:], start=2):
+        other_w, other_h = _geometry(part)
+        if (other_w, other_h) != (width, height):
+            raise MuxError(
+                f"part {index} is {other_w}x{other_h} and part 1 is "
+                f"{width}x{height} — the parts of one render have to match"
+            )
+    return width, height
+
+
+def _audio_format(parts):
+    """(sample_rate, channels) for the reel, refusing parts that disagree.
+
+    Read off the reel rather than assumed: the rate is the audio VAE's output
+    rate, which is a fact about the weights on this disk and not a constant
+    this package gets to pick.
+    """
+    rate = channels = None
+    for index, part in enumerate(parts, start=1):
+        if is_clip(part):
+            # A clip's own rate and layout are the file's, and it is resampled
+            # to the reel's on the way in — so what it declares here is the
+            # target the graph gave it, read off the audio VAE. A clip playing
+            # silent declares nothing and takes the reel's.
+            if not part["clip"].get("sound") or part["clip"].get("rate") is None:
+                continue
+            part_rate = int(part["clip"]["rate"])
+            part_channels = int(part["clip"]["channels"])
+        elif "audio_path" in part["pass"]:
+            part_rate = int(part["pass"]["rate"])
+            part_channels = int(part["pass"]["channels"])
+        else:
+            continue
+        if rate is None:
+            rate, channels = part_rate, part_channels
+        elif (part_rate, part_channels) != (rate, channels):
+            raise MuxError(
+                f"part {index} has {part_channels} channels at {part_rate} Hz "
+                f"and the reel is {channels} at {rate} — the parts of one "
+                f"render have to match"
+            )
+    if rate is not None and channels not in _LAYOUTS:
+        raise MuxError(f"cannot write {channels}-channel audio")
+    return rate, channels
+
+
+def _fit(waveform, samples):
+    """One part's sound, held to exactly the length of its own picture.
+
+    Cut when it overruns, padded with silence when it falls short. Both are
+    rounding between a frame count and a sample count — a generated part's two
+    halves are the same span by construction — and the alternative is not
+    "faithful", it is every later part sliding by the difference.
+    """
+    have = waveform.shape[-1]
+    if have > samples:
+        return waveform[..., :samples]
+    if have < samples:
+        pad = torch.zeros(waveform.shape[:-1] + (samples - have,), dtype=waveform.dtype)
+        return torch.cat([waveform, pad], dim=-1)
+    return waveform
+
+
+@dataclass(frozen=True)
+class _Target:
+    """The open container and streams a part is written into."""
+
+    output: object
+    video: object
+    audio: object                 # None when the reel has no sound at all
+    pix_fmt: str
+    frame_rate: Fraction
+    video_time_base: Fraction
+    rate: int | None
+    channels: int | None
+    layout: str | None
+    audio_time_base: Fraction | None
+
+
+def _mux_sound(av, target, waveform, at):
+    """Write one part's fitted waveform, in chunks, starting at sample `at`."""
+    chunk = max(1, int(_AUDIO_CHUNK_S * target.rate))
+    for start in range(0, waveform.shape[-1], chunk):
+        block = waveform[..., start:start + chunk].contiguous().numpy()
+        sound = av.AudioFrame.from_ndarray(
+            np.ascontiguousarray(block), format="fltp", layout=target.layout)
+        sound.sample_rate = target.rate
+        sound.pts = at + start
+        sound.time_base = target.audio_time_base
+        target.output.mux(target.audio.encode(sound))
+
+
+def _write_pass(av, target, spec, at_frame, at_sample):
+    """A generated pass, read back off disk. -> (frames, samples).
+
+    The frames come through a memmap and are already the 8-bit RGB the encoder
+    wants, so a frame is paged in, encoded and dropped — the pass is never
+    resident, whatever its length. `spill.py` owns the format; this end only
+    reads it.
+    """
+    data = spill.open_frames(spec)
+    count = int(spec["frames"])
+    for index in range(count):
+        frame = av.VideoFrame.from_ndarray(
+            np.ascontiguousarray(data[index]), format="rgb24")
+        frame = frame.reformat(format=target.pix_fmt)
+        frame.pts = at_frame + index
+        frame.time_base = target.video_time_base
+        target.output.mux(target.video.encode(frame))
+    del data
+
+    if target.audio is None:
+        return count, 0
+    # The part's own sound, held to the part's own picture — see `_fit`. A part
+    # with no soundtrack at all in a reel that has one is silence of exactly its
+    # own length, which is the only thing that keeps the parts after it where
+    # they belong.
+    wanted = int(round(count / float(target.frame_rate) * target.rate))
+    if "audio_path" in spec:
+        # Copied off the map rather than aliased: `_fit` may pad it, and the
+        # chunks handed to the encoder outlive this line. Sound is three orders
+        # of magnitude smaller than the picture it goes with.
+        waveform = torch.from_numpy(np.array(
+            np.memmap(spec["audio_path"], dtype=np.float32, mode="r",
+                      shape=(int(spec["channels"]), int(spec["samples"])))))
+    else:
+        waveform = torch.zeros(target.channels, 0)
+    _mux_sound(av, target, _fit(waveform, wanted), at_sample)
+    return count, wanted
+
+
+def _clip_graph(av, stream, frame, width, height, frame_rate):
+    """The filter chain a supplied clip is conformed through.
+
+    Three things, and ffmpeg does all three properly so this does not:
+
+    - `fps` resamples the source's rate to the render's, duplicating or
+      dropping frames. The reel is one constant-rate stream, so a 30 fps source
+      cannot simply be handed over — it would play 25% slow.
+    - `scale` with `increase` fills the canvas rather than fitting inside it,
+      and `crop` takes the middle of what overflows. Cover, not letterbox: the
+      generated passes have no bars and a supplied clip with them would read as
+      a different piece rather than as a different shot. Which half of the
+      overflow to keep is a real editorial choice and the middle is the only
+      defensible default.
+    - `setsar` makes the output square-pixel. Anamorphic sources are scaled by
+      their storage size here, which is wrong by their pixel aspect; it is rare
+      enough to be worth naming rather than carrying a DAR calculation.
+
+    `fps` comes first so the scaler only ever touches frames that survive.
+
+    Returns the graph along with its two ends, and the caller has to hold it:
+    the filter contexts do not own it, so a graph nothing references is
+    collected out from under the push that follows and the process dies rather
+    than raising.
+    """
+    graph = av.filter.Graph()
+    source = graph.add_buffer(width=frame.width, height=frame.height,
+                              format=frame.format.name,
+                              time_base=stream.time_base)
+    tail = source
+    for name, args in (("fps", f"fps={frame_rate}"),
+                       (
+                           "scale",
+                           f"{width}:{height}:force_original_aspect_ratio=increase",
+                       ),
+                       ("crop", f"{width}:{height}"),
+                       ("setsar", "1")):
+        step = graph.add(name, args)
+        tail.link_to(step)
+        tail = step
+    sink = graph.add("buffersink")
+    tail.link_to(sink)
+    graph.configure()
+    return graph, source, sink
+
+
+def _write_clip(av, target, spec, at_frame, at_sample):
+    """Supplied footage, spliced in without ever being decoded into the reel.
+
+    Two passes over the container: the picture, which is what decides how long
+    this part is, and then the sound, capped to the length the picture came out
+    at. Two passes rather than one interleaved loop because the cap is not
+    known until the frames are counted, and the alternative — holding the
+    soundtrack in memory until it is — is the thing this is avoiding, in
+    miniature. The second pass demuxes only the audio stream, so it costs a
+    read of the file and no video decode at all.
+    """
+    width, height = int(spec["width"]), int(spec["height"])
+    start, duration = float(spec.get("start") or 0.0), float(spec.get("duration") or 0.0)
+    path = spec["path"]
+
+    count = 0
+
+    def drain(sink):
+        """Every frame the filter chain has ready, encoded into the stream."""
+        nonlocal count
+        while True:
+            try:
+                out = sink.pull()
+            except (av.error.BlockingIOError, av.error.EOFError):
+                return
+            out = out.reformat(format=target.pix_fmt)
+            out.pts = at_frame + count
+            out.time_base = target.video_time_base
+            target.output.mux(target.video.encode(out))
+            count += 1
+
+    with av.open(path) as container:
+        if not container.streams.video:
+            raise MuxError(f"{spec.get('name') or path!r} has no video to play")
+        stream = container.streams.video[0]
+        first_pts = start / stream.time_base
+        end = (start + duration) / stream.time_base if duration else None
+        if start:
+            container.seek(int(first_pts), stream=stream)
+        chain = source = sink = None
+        for frame in container.decode(stream):
+            if frame.pts is not None:
+                if frame.pts < first_pts:
+                    continue
+                if end is not None and frame.pts >= end:
+                    break
+            if source is None:
+                # `chain` is held for as long as its two ends are used — see
+                # `_clip_graph`.
+                chain, source, sink = _clip_graph(av, stream, frame, width, height,
+                                                  target.frame_rate)
+            source.push(frame)
+            drain(sink)
+        if source is not None:
+            # The fps filter holds a frame back to decide its duration; without
+            # the flush a clip is short by one every time.
+            source.push(None)
+            drain(sink)
+        del chain
+
+    if not count:
+        raise MuxError(
+            f"{spec.get('name') or path!r} has no frames in the "
+            f"{start:.2f}–{start + duration:.2f} s segment asked for"
+        )
+    if target.audio is None:
+        return count, 0
+
+    wanted = int(round(count / float(target.frame_rate) * target.rate))
+    waveform = _clip_sound(av, path, spec, start, duration, target) \
+        if spec.get("sound") else torch.zeros(target.channels, 0)
+    _mux_sound(av, target, _fit(waveform, wanted), at_sample)
+    return count, wanted
+
+
+def _clip_sound(av, path, spec, start, duration, target):
+    """A supplied clip's soundtrack, at the reel's rate and layout.
+
+    Resampled by ffmpeg rather than by hand: the rate conversion, the format
+    and — where a source is mono or 5.1 — the channel mix are all things it has
+    correct matrices for and we would be inventing. A clip whose container
+    carries no sound at all comes back empty and is padded to its own length by
+    `_fit`, which is what a silent shot is.
+    """
+    with av.open(path) as container:
+        stream = next(iter(container.streams.audio), None)
+        if stream is None:
+            return torch.zeros(target.channels, 0)
+        resampler = av.audio.resampler.AudioResampler(
+            format="fltp", layout=target.layout, rate=target.rate)
+        end = start + duration if duration else None
+        if start:
+            container.seek(int(start / stream.time_base), stream=stream)
+        blocks = []
+        # A seek lands on a packet boundary, which is at or *before* the window
+        # — so the first frame kept usually begins early. How early is what
+        # gets dropped off the front, and dropping it is what keeps the sound
+        # in step with a picture that was cut at the frame.
+        began = None
+        for frame in container.decode(stream):
+            if frame.time is not None:
+                if frame.time + frame.samples / float(frame.sample_rate or 1) <= start:
+                    continue
+                if end is not None and frame.time >= end:
+                    break
+                if began is None:
+                    began = frame.time
+            for out in resampler.resample(frame):
+                blocks.append(torch.from_numpy(out.to_ndarray()))
+        for out in resampler.resample(None):
+            blocks.append(torch.from_numpy(out.to_ndarray()))
+    if not blocks:
+        return torch.zeros(target.channels, 0)
+    waveform = torch.cat(blocks, dim=-1)
+    early = int(round(max(0.0, start - (began if began is not None else start))
+                      * target.rate))
+    return waveform[..., early:] if early else waveform
+
+
+def write(path, parts, fps, crf, metadata=None):
+    """Write a reel to `path` as one H.264/AAC mp4. -> (width, height).
+
+    `parts` is the reel: `[{"pass": spill spec} | {"clip": clip spec}, ...]` in
+    play order. One container, one video stream and one audio stream, opened
+    once and fed part by part — the encoder is never flushed between parts, so
+    what comes out is one continuous stream rather than files stitched together.
+    """
+    import av
+
+    width, height = reel_geometry(parts)
+    rate, channels = _audio_format(parts)
+    frame_rate = Fraction(round(float(fps)))
+    video_time_base = Fraction(1, frame_rate.numerator)
+    pix_fmt = "yuv420p"
+
+    # Same flags core writes: metadata tags survive, and faststart puts the
+    # index at the front so the stage can play the file as it downloads.
+    with av.open(path, mode="w", options={"movflags": "use_metadata_tags+faststart"}) as output:
+        # Before any stream, like core's savers — the workflow rides in the
+        # container so a render dropped back on the canvas rebuilds its node.
+        for key, value in (metadata or {}).items():
+            output.metadata[key] = value if isinstance(value, str) else json.dumps(value)
+
+        video = output.add_stream("h264", rate=frame_rate)
+        video.width, video.height, video.pix_fmt = width, height, pix_fmt
+        video.options = {"crf": str(int(crf))}
+        video.codec_context.time_base = video_time_base
+
+        audio = None
+        if rate is not None:
+            layout = _LAYOUTS[channels]
+            audio = output.add_stream("aac", rate=rate, layout=layout)
+            audio_time_base = Fraction(1, rate)
+
+        written_frames = 0
+        written_samples = 0
+        # Everything a part needs in order to be written into the streams that
+        # are already open. Gathered here rather than passed as eight
+        # arguments, because the two kinds of part want exactly the same set.
+        target = _Target(output, video, audio, pix_fmt, frame_rate,
+                         video_time_base, rate, channels,
+                         _LAYOUTS[channels] if channels else None,
+                         Fraction(1, rate) if rate else None)
+
+        for part in parts:
+            if is_clip(part):
+                frames, samples = _write_clip(av, target, part["clip"],
+                                              written_frames, written_samples)
+            else:
+                frames, samples = _write_pass(av, target, part["pass"],
+                                              written_frames, written_samples)
+            written_frames += frames
+            written_samples += samples
+
+        # Flushed once, at the end of the reel rather than at the end of each
+        # part: a flush closes out the encoder's lookahead, and doing it per
+        # part would put a keyframe and a GOP boundary at every join.
+        output.mux(video.encode(None))
+        if audio is not None:
+            output.mux(audio.encode(None))
+
+    return width, height

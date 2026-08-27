@@ -1,0 +1,887 @@
+{
+  "format": "z3_minimax_h3_pack_v1",
+  "name": "MiniMax H3 Creator Starter Pack",
+  "version": 1,
+  "catalog": {
+    "version": 1,
+    "name": "Prompt Palette — MiniMax H3 Creator Starter Pack",
+    "models": [
+      {
+        "id": "minimax-creator-h3",
+        "name": "MiniMax Creator H3 — Starter Pack",
+        "kind": "video",
+        "accent": "#66b7aa",
+        "categories": [
+          {
+            "id": "characters",
+            "name": "Alien Cast Examples",
+            "visual": "portrait",
+            "prompts": [
+              {
+                "id": "alien-orin-vex",
+                "title": "Orin Vex",
+                "prompt": "@Orin_Vex",
+                "note": "Teal amphibious science officer.",
+                "visual": "portrait",
+                "subcategory": "Alien Cast"
+              },
+              {
+                "id": "alien-tala-quill",
+                "title": "Tala Quill",
+                "prompt": "@Tala_Quill",
+                "note": "Lavender four-eyed navigator.",
+                "visual": "portrait",
+                "subcategory": "Alien Cast"
+              },
+              {
+                "id": "alien-bronn-kest",
+                "title": "Bronn Kest",
+                "prompt": "@Bronn_Kest",
+                "note": "Stone-skinned ship mechanic.",
+                "visual": "portrait",
+                "subcategory": "Alien Cast"
+              },
+              {
+                "id": "alien-nemi-sol",
+                "title": "Nemi Sol",
+                "prompt": "@Nemi_Sol",
+                "note": "Golden translucent diplomat.",
+                "visual": "portrait",
+                "subcategory": "Alien Cast"
+              },
+              {
+                "id": "alien-pip-rook",
+                "title": "Pip Rook",
+                "prompt": "@Pip_Rook",
+                "note": "Small fuzzy engineering specialist.",
+                "visual": "portrait",
+                "subcategory": "Alien Cast"
+              }
+            ]
+          },
+          {
+            "id": "locations",
+            "name": "Locations",
+            "visual": "interior",
+            "prompts": [
+              {
+                "id": "loc-starship-bridge",
+                "title": "Starship bridge",
+                "prompt": "a clean lived-in starship bridge with layered consoles, observation windows, practical controls and a readable central command area",
+                "note": "A reusable sci-fi interior.",
+                "visual": "interior",
+                "subcategory": "Sci-Fi"
+              },
+              {
+                "id": "loc-lunar-lab",
+                "title": "Lunar research lab",
+                "prompt": "a pressurized lunar research laboratory with specimen tables, compact equipment, dust visible beyond reinforced windows",
+                "note": "Clean science setting.",
+                "visual": "interior",
+                "subcategory": "Sci-Fi"
+              },
+              {
+                "id": "loc-observatory",
+                "title": "Mountain observatory",
+                "prompt": "a high-altitude observatory dome at night with a large telescope, control desk and open sky slit",
+                "note": "Grounded cinematic location.",
+                "visual": "architecture",
+                "subcategory": "Earth"
+              },
+              {
+                "id": "loc-coastal-house",
+                "title": "Coastal house",
+                "prompt": "a bright modern coastal house with warm wood, large windows and ocean visible beyond the terrace",
+                "note": "Neutral lifestyle environment.",
+                "visual": "interior",
+                "subcategory": "Earth"
+              },
+              {
+                "id": "loc-forest",
+                "title": "Forest clearing",
+                "prompt": "a quiet forest clearing surrounded by tall trees, soft ground cover and a narrow footpath",
+                "note": "Natural exterior.",
+                "visual": "forest",
+                "subcategory": "Earth"
+              },
+              {
+                "id": "loc-desert",
+                "title": "Desert canyon",
+                "prompt": "a broad sandstone canyon with wind-shaped rock, dry ground and a distant horizon",
+                "note": "Open exterior.",
+                "visual": "landscape",
+                "subcategory": "Earth"
+              },
+              {
+                "id": "loc-workshop",
+                "title": "Machine workshop",
+                "prompt": "a practical fabrication workshop with benches, tools, storage drawers and partially assembled machines",
+                "note": "Useful prop/action setting.",
+                "visual": "interior",
+                "subcategory": "Work"
+              },
+              {
+                "id": "loc-film-stage",
+                "title": "Film stage",
+                "prompt": "a professional soundstage with modular scenery, practical fixtures, floor marks and production equipment kept outside the active frame",
+                "note": "Neutral production environment.",
+                "visual": "interior",
+                "subcategory": "Production"
+              }
+            ]
+          },
+          {
+            "id": "wardrobe-props",
+            "name": "Clothing & Props",
+            "visual": "fashion",
+            "prompts": [
+              {
+                "id": "ward-flight-suit",
+                "title": "Flight suit",
+                "prompt": "a fitted practical flight suit with utility seams, boots and restrained mission patches",
+                "note": "Neutral sci-fi wardrobe.",
+                "visual": "fashion",
+                "subcategory": "Clothing"
+              },
+              {
+                "id": "ward-lab-coat",
+                "title": "Research coat",
+                "prompt": "a clean research coat over practical layered clothing",
+                "note": "Science wardrobe.",
+                "visual": "fashion",
+                "subcategory": "Clothing"
+              },
+              {
+                "id": "ward-tailored-suit",
+                "title": "Tailored suit",
+                "prompt": "a modern tailored suit with clean shirt and understated shoes",
+                "note": "Professional wardrobe.",
+                "visual": "fashion",
+                "subcategory": "Clothing"
+              },
+              {
+                "id": "ward-casual",
+                "title": "Casual layers",
+                "prompt": "a soft shirt, lightweight jacket, practical trousers and comfortable shoes",
+                "note": "Everyday wardrobe.",
+                "visual": "fashion",
+                "subcategory": "Clothing"
+              },
+              {
+                "id": "prop-scanner",
+                "title": "Hand scanner",
+                "prompt": "a compact handheld environmental scanner with a readable display and physical controls",
+                "note": "Small interactive prop.",
+                "visual": "product",
+                "subcategory": "Props"
+              },
+              {
+                "id": "prop-map",
+                "title": "Folded field map",
+                "prompt": "a weathered folded field map with handwritten marks and route notes",
+                "note": "Grounded story prop.",
+                "visual": "stilllife",
+                "subcategory": "Props"
+              },
+              {
+                "id": "prop-toolkit",
+                "title": "Toolkit",
+                "prompt": "a compact hard-shell toolkit with organized precision tools",
+                "note": "Mechanical prop.",
+                "visual": "stilllife",
+                "subcategory": "Props"
+              },
+              {
+                "id": "prop-data-pad",
+                "title": "Data pad",
+                "prompt": "a thin ruggedized data pad with a simple readable interface",
+                "note": "Sci-fi utility prop.",
+                "visual": "product",
+                "subcategory": "Props"
+              }
+            ]
+          },
+          {
+            "id": "actions",
+            "name": "Action",
+            "visual": "motion",
+            "prompts": [
+              {
+                "id": "act-enter",
+                "title": "Enter and survey",
+                "prompt": "enters the space, slows, and surveys the surroundings before choosing a direction",
+                "note": "Clear simple blocking.",
+                "visual": "motion",
+                "subcategory": "Blocking"
+              },
+              {
+                "id": "act-pickup",
+                "title": "Pick up and inspect",
+                "prompt": "picks up the nearby object, turns it in hand, and studies one detail closely",
+                "note": "Prop interaction.",
+                "visual": "motion",
+                "subcategory": "Blocking"
+              },
+              {
+                "id": "act-walk-talk",
+                "title": "Walk and talk",
+                "prompt": "walks at an unhurried pace while speaking naturally, maintaining believable eyelines and body rhythm",
+                "note": "Dialogue-friendly action.",
+                "visual": "motion",
+                "subcategory": "Performance"
+              },
+              {
+                "id": "act-react",
+                "title": "Notice and react",
+                "prompt": "notices something off-screen, pauses, then reacts with a readable change in posture and expression",
+                "note": "Performance beat.",
+                "visual": "motion",
+                "subcategory": "Performance"
+              },
+              {
+                "id": "act-console",
+                "title": "Operate controls",
+                "prompt": "uses the physical controls deliberately, checks the display, and makes one final adjustment",
+                "note": "Interface action.",
+                "visual": "motion",
+                "subcategory": "Sci-Fi"
+              },
+              {
+                "id": "act-repair",
+                "title": "Repair mechanism",
+                "prompt": "opens the access panel, adjusts a component with a hand tool, tests it, and closes the panel",
+                "note": "Mechanical action.",
+                "visual": "motion",
+                "subcategory": "Work"
+              },
+              {
+                "id": "act-sit",
+                "title": "Sit and settle",
+                "prompt": "sits down naturally, settles posture, and focuses attention forward",
+                "note": "Simple staging.",
+                "visual": "motion",
+                "subcategory": "Blocking"
+              },
+              {
+                "id": "act-run",
+                "title": "Short run",
+                "prompt": "breaks into a short controlled run, decelerates, and stops with grounded momentum",
+                "note": "Dynamic movement.",
+                "visual": "motion",
+                "subcategory": "Movement"
+              }
+            ]
+          },
+          {
+            "id": "camera",
+            "name": "Camera",
+            "visual": "camera",
+            "prompts": [
+              {
+                "id": "cam-wide",
+                "title": "Wide establishing",
+                "prompt": "wide establishing shot with stable geography and clear subject placement",
+                "note": "Readable geography.",
+                "visual": "camera",
+                "subcategory": "Framing"
+              },
+              {
+                "id": "cam-medium",
+                "title": "Medium performance",
+                "prompt": "medium shot at eye level, natural perspective, keeping hands and upper body readable",
+                "note": "Performance framing.",
+                "visual": "camera",
+                "subcategory": "Framing"
+              },
+              {
+                "id": "cam-close",
+                "title": "Close-up",
+                "prompt": "close-up with natural facial perspective and restrained depth of field",
+                "note": "Expression framing.",
+                "visual": "camera",
+                "subcategory": "Framing"
+              },
+              {
+                "id": "cam-push",
+                "title": "Slow push in",
+                "prompt": "a slow controlled push-in toward the subject without sudden acceleration",
+                "note": "Simple camera motion.",
+                "visual": "camera",
+                "subcategory": "Movement"
+              },
+              {
+                "id": "cam-pull",
+                "title": "Slow pull back",
+                "prompt": "a slow pull-back that reveals more of the environment while preserving the subject as the visual anchor",
+                "note": "Reveal movement.",
+                "visual": "camera",
+                "subcategory": "Movement"
+              },
+              {
+                "id": "cam-pan",
+                "title": "Measured pan",
+                "prompt": "a measured horizontal pan following the subject while maintaining consistent horizon and speed",
+                "note": "Tracking movement.",
+                "visual": "camera",
+                "subcategory": "Movement"
+              },
+              {
+                "id": "cam-orbit",
+                "title": "Gentle orbit",
+                "prompt": "a gentle partial orbit around the subject with stable distance and smooth parallax",
+                "note": "Spatial movement.",
+                "visual": "camera",
+                "subcategory": "Movement"
+              },
+              {
+                "id": "cam-handheld",
+                "title": "Subtle handheld",
+                "prompt": "subtle human handheld camera with restrained micro-movement, never shaky or chaotic",
+                "note": "Natural handheld.",
+                "visual": "camera",
+                "subcategory": "Movement"
+              }
+            ]
+          },
+          {
+            "id": "lighting",
+            "name": "Lighting",
+            "visual": "lighting",
+            "prompts": [
+              {
+                "id": "light-window",
+                "title": "Soft window light",
+                "prompt": "soft directional daylight from a large window with natural fill and gentle shadow falloff",
+                "note": "Neutral daylight.",
+                "visual": "lighting",
+                "subcategory": "Natural"
+              },
+              {
+                "id": "light-overcast",
+                "title": "Overcast exterior",
+                "prompt": "soft overcast daylight with broad even illumination and restrained contrast",
+                "note": "Exterior neutral.",
+                "visual": "lighting",
+                "subcategory": "Natural"
+              },
+              {
+                "id": "light-warm-interior",
+                "title": "Warm practical interior",
+                "prompt": "warm practical lamps motivated by visible fixtures with subtle cooler ambient fill",
+                "note": "Interior mood.",
+                "visual": "lighting",
+                "subcategory": "Practical"
+              },
+              {
+                "id": "light-lab",
+                "title": "Clean laboratory",
+                "prompt": "clean neutral laboratory lighting with practical overhead sources and controlled reflections",
+                "note": "Science environment.",
+                "visual": "lighting",
+                "subcategory": "Practical"
+              },
+              {
+                "id": "light-moon",
+                "title": "Moonlit exterior",
+                "prompt": "cool moonlit exterior with readable silhouettes, gentle atmospheric depth and motivated practical accents",
+                "note": "Night exterior.",
+                "visual": "lighting",
+                "subcategory": "Night"
+              },
+              {
+                "id": "light-golden",
+                "title": "Late afternoon",
+                "prompt": "late-afternoon sunlight with warm edge light, long soft shadows and natural sky fill",
+                "note": "Golden-hour look.",
+                "visual": "lighting",
+                "subcategory": "Natural"
+              }
+            ]
+          },
+          {
+            "id": "audio",
+            "name": "Audio & Music",
+            "visual": "audio",
+            "prompts": [
+              {
+                "id": "audio-room",
+                "title": "Room tone",
+                "prompt": "natural room tone matched to the environment with no distracting foreground noise",
+                "note": "Basic ambience.",
+                "visual": "audio",
+                "subcategory": "Ambience"
+              },
+              {
+                "id": "audio-workshop",
+                "title": "Workshop ambience",
+                "prompt": "subtle ventilation, distant tool handling, small metallic ticks and believable workshop room tone",
+                "note": "Environment audio.",
+                "visual": "audio",
+                "subcategory": "Ambience"
+              },
+              {
+                "id": "audio-forest",
+                "title": "Forest ambience",
+                "prompt": "light wind through leaves, distant birds and soft ground movement with realistic spatial depth",
+                "note": "Exterior ambience.",
+                "visual": "audio",
+                "subcategory": "Ambience"
+              },
+              {
+                "id": "music-none",
+                "title": "No score",
+                "prompt": "no non-diegetic music; let dialogue and environmental sound carry the scene",
+                "note": "Useful clean default.",
+                "visual": "audio",
+                "subcategory": "Music"
+              },
+              {
+                "id": "music-minimal",
+                "title": "Minimal score",
+                "prompt": "a restrained minimal instrumental score that stays behind dialogue and leaves space for natural sound",
+                "note": "Low-key music.",
+                "visual": "audio",
+                "subcategory": "Music"
+              }
+            ]
+          },
+          {
+            "id": "dialogue-performance",
+            "name": "Dialogue Performance",
+            "visual": "dialogue",
+            "prompts": [
+              {
+                "id": "dlg-natural",
+                "title": "Natural conversation",
+                "prompt": "speaks conversationally with believable pauses, small breaths and restrained facial movement",
+                "note": "General dialogue direction.",
+                "visual": "dialogue",
+                "subcategory": "Performance"
+              },
+              {
+                "id": "dlg-quiet",
+                "title": "Quiet delivery",
+                "prompt": "speaks quietly and deliberately, keeping the delivery close, restrained and fully intelligible",
+                "note": "Soft delivery.",
+                "visual": "dialogue",
+                "subcategory": "Performance"
+              },
+              {
+                "id": "dlg-urgent",
+                "title": "Urgent delivery",
+                "prompt": "speaks with controlled urgency, faster pacing and clear articulation without shouting",
+                "note": "Urgent performance.",
+                "visual": "dialogue",
+                "subcategory": "Performance"
+              }
+            ]
+          },
+          {
+            "id": "foley",
+            "name": "Foley",
+            "visual": "audio",
+            "prompts": [
+              {
+                "id": "foley-footsteps",
+                "title": "Footsteps",
+                "prompt": "synchronized footsteps appropriate to the floor surface, pace and footwear",
+                "note": "Basic synced foley.",
+                "visual": "audio",
+                "subcategory": "Foley"
+              },
+              {
+                "id": "foley-cloth",
+                "title": "Cloth movement",
+                "prompt": "subtle synchronized clothing movement matching body motion",
+                "note": "Performance foley.",
+                "visual": "audio",
+                "subcategory": "Foley"
+              },
+              {
+                "id": "foley-prop",
+                "title": "Prop handling",
+                "prompt": "synchronized small handling sounds for the active prop with believable material texture",
+                "note": "Prop foley.",
+                "visual": "audio",
+                "subcategory": "Foley"
+              }
+            ]
+          },
+          {
+            "id": "builders",
+            "name": "Scene Starters",
+            "visual": "cinematic",
+            "prompts": [
+              {
+                "id": "scene-alien-bridge",
+                "title": "Alien bridge discovery",
+                "prompt": "@Orin_Vex stands on a clean starship bridge, studies an unfamiliar signal on the central console, then looks toward the observation window as the ship changes course.",
+                "note": "Simple alien reference example.",
+                "visual": "cinematic",
+                "subcategory": "Example Scenes"
+              },
+              {
+                "id": "scene-lab-sample",
+                "title": "Lunar sample",
+                "prompt": "@Tala_Quill examines a sealed sample inside a lunar laboratory, records a note, and notices a faint change inside the container.",
+                "note": "Simple science scene.",
+                "visual": "cinematic",
+                "subcategory": "Example Scenes"
+              },
+              {
+                "id": "scene-workshop-fix",
+                "title": "Workshop repair",
+                "prompt": "@Bronn_Kest repairs a compact machine at a workshop bench, tests the mechanism, and reacts when it finally powers on.",
+                "note": "Prop/action example.",
+                "visual": "cinematic",
+                "subcategory": "Example Scenes"
+              },
+              {
+                "id": "scene-diplomat",
+                "title": "Diplomatic arrival",
+                "prompt": "@Nemi_Sol enters a formal observation room, pauses at the window, and calmly begins a short address.",
+                "note": "Dialogue-ready example.",
+                "visual": "cinematic",
+                "subcategory": "Example Scenes"
+              },
+              {
+                "id": "scene-small-engineer",
+                "title": "Tiny engineer",
+                "prompt": "@Pip_Rook climbs onto a low equipment case, opens a toolkit, and carefully adjusts a control panel that is larger than their torso.",
+                "note": "Scale and interaction example.",
+                "visual": "cinematic",
+                "subcategory": "Example Scenes"
+              }
+            ]
+          },
+          {
+            "id": "frame-guides",
+            "name": "Frame Guides",
+            "visual": "image",
+            "description": "Prompt scaffolds for first-frame and first+last-frame H3 workflows.",
+            "prompts": [
+              {
+                "id": "frm-1",
+                "title": "First-frame only",
+                "prompt": "For the target video, at 0.00 seconds into the target video, <Picture 1> is fully referenced. Integrate the reference faithfully at the opening frame, then continue with natural motion and consistent appearance.",
+                "note": "Use after connecting a first frame.",
+                "visual": "image",
+                "subcategory": "First frame"
+              },
+              {
+                "id": "frm-2",
+                "title": "First and last frame",
+                "prompt": "How the reference pictures align with the target video — Picture 1 aligns with the 0.00-second mark of the target video, and Picture 2 aligns with the final frame of the target video. Transition naturally from the first composition to the second while preserving subject identity and scene continuity.",
+                "note": "Use after connecting both first and last frame.",
+                "visual": "image",
+                "subcategory": "First + last"
+              },
+              {
+                "id": "frm-3",
+                "title": "Land on final frame",
+                "prompt": "The target video should progress naturally and arrive on the reference composition at the final frame, matching the subject, environment, and overall framing.",
+                "note": "Use when only the last frame is wired.",
+                "visual": "image",
+                "subcategory": "Last frame"
+              }
+            ]
+          },
+          {
+            "id": "continuity",
+            "name": "Continuity & Identity",
+            "visual": "person",
+            "description": "Phrases that help H3 preserve subjects and scenes across motion or shots.",
+            "prompts": [
+              {
+                "id": "co1",
+                "title": "Identity hold",
+                "prompt": "Preserve the subject’s facial features, hairstyle, proportions, clothing, and distinguishing details consistently throughout the shot.",
+                "note": "Identity continuity.",
+                "visual": "person",
+                "subcategory": "Identity"
+              },
+              {
+                "id": "co2",
+                "title": "Wardrobe hold",
+                "prompt": "The wardrobe remains unchanged in color, material, fit, and accessories throughout the sequence.",
+                "note": "Wardrobe continuity.",
+                "visual": "person",
+                "subcategory": "Identity"
+              },
+              {
+                "id": "co3",
+                "title": "Scene hold",
+                "prompt": "Keep the room layout, furniture placement, practical lights, and background objects spatially consistent.",
+                "note": "Environment continuity.",
+                "visual": "location",
+                "subcategory": "Scene"
+              },
+              {
+                "id": "co4",
+                "title": "Prop hold",
+                "prompt": "The held object keeps the same size, color, labels, and orientation continuity as it moves through the shot.",
+                "note": "Prop continuity.",
+                "visual": "product",
+                "subcategory": "Object"
+              },
+              {
+                "id": "co5",
+                "title": "Eyeline continuity",
+                "prompt": "Maintain believable eyelines and screen direction between the characters.",
+                "note": "Conversation continuity.",
+                "visual": "camera",
+                "subcategory": "Blocking"
+              },
+              {
+                "id": "co6",
+                "title": "Motion continuity",
+                "prompt": "Motion remains physically continuous with no teleporting, duplicate limbs, or sudden pose resets.",
+                "note": "Motion continuity.",
+                "visual": "motion",
+                "subcategory": "Motion"
+              }
+            ]
+          },
+          {
+            "id": "reference-scopes",
+            "name": "Reference Scope Phrases",
+            "visual": "image",
+            "description": "Natural-language reference guidance matching H3 reference roles.",
+            "prompts": [
+              {
+                "id": "rs1",
+                "title": "Person only",
+                "prompt": "Use the referenced person for identity and appearance while allowing the target scene, pose, and composition to follow this prompt.",
+                "note": "Pairs with person scope.",
+                "visual": "image",
+                "subcategory": "Image scope"
+              },
+              {
+                "id": "rs2",
+                "title": "Object only",
+                "prompt": "Use the referenced object for its appearance and defining details without inheriting the source background.",
+                "note": "Pairs with object scope.",
+                "visual": "image",
+                "subcategory": "Image scope"
+              },
+              {
+                "id": "rs3",
+                "title": "Scene only",
+                "prompt": "Use the referenced environment for spatial layout and atmosphere while placing the prompted subjects naturally within it.",
+                "note": "Pairs with scene scope.",
+                "visual": "image",
+                "subcategory": "Image scope"
+              },
+              {
+                "id": "rs4",
+                "title": "Motion only",
+                "prompt": "Borrow the reference video’s action and timing while applying that movement to the prompted subject.",
+                "note": "Pairs with motion scope.",
+                "visual": "video",
+                "subcategory": "Video scope"
+              },
+              {
+                "id": "rs5",
+                "title": "Camera only",
+                "prompt": "Borrow the reference video’s camera movement, pacing, and framing changes without copying its visible subject.",
+                "note": "Pairs with camera scope.",
+                "visual": "video",
+                "subcategory": "Video scope"
+              },
+              {
+                "id": "rs6",
+                "title": "Voice only",
+                "prompt": "Use the reference audio for voice character and delivery while speaking the dialogue written in this prompt.",
+                "note": "Pairs with voice scope.",
+                "visual": "sound",
+                "subcategory": "Audio scope"
+              }
+            ]
+          },
+          {
+            "id": "multi-shot",
+            "name": "Multi-Shot Continuity",
+            "visual": "script",
+            "description": "Reusable blocks for timeline pieces and connected shots.",
+            "prompts": [
+              {
+                "id": "ms1",
+                "title": "Establish then detail",
+                "prompt": "[Shot 1] Establish the location and subject clearly. [Shot 2] Cut closer to the subject’s hands and the important object, preserving wardrobe, lighting direction, and screen direction.",
+                "note": "Two-shot builder.",
+                "visual": "script",
+                "subcategory": "Timeline"
+              },
+              {
+                "id": "ms2",
+                "title": "Dialogue coverage",
+                "prompt": "[Shot 1] Medium two-shot establishes both speakers. [Shot 2] Over-the-shoulder on the first speaker. [Shot 3] Reverse over-the-shoulder on the second speaker. Preserve eyelines, positions, wardrobe, and room lighting.",
+                "note": "Dialogue coverage.",
+                "visual": "script",
+                "subcategory": "Timeline"
+              },
+              {
+                "id": "ms3",
+                "title": "Action progression",
+                "prompt": "[Shot 1] The subject prepares. [Shot 2] The action begins with continuous movement. [Shot 3] The action resolves in a clean final pose. Keep identity, direction of travel, and object continuity consistent.",
+                "note": "Action sequence.",
+                "visual": "script",
+                "subcategory": "Timeline"
+              },
+              {
+                "id": "ms4",
+                "title": "Product sequence",
+                "prompt": "[Shot 1] Hero establishing view of the product. [Shot 2] Close detail of the key feature in use. [Shot 3] Clean end frame with the product fully readable and unobstructed.",
+                "note": "Commercial timeline.",
+                "visual": "product",
+                "subcategory": "Timeline"
+              },
+              {
+                "id": "ms5",
+                "title": "Continue ambience",
+                "prompt": "Carry the same room tone, environmental ambience, and musical energy across the cut without an abrupt audio reset.",
+                "note": "Audio continuity.",
+                "visual": "sound",
+                "subcategory": "Audio"
+              },
+              {
+                "id": "ms6",
+                "title": "Intentional hard cut",
+                "prompt": "Use a clear hard cut between shots while preserving subject identity and scene geography.",
+                "note": "Cut guidance.",
+                "visual": "camera",
+                "subcategory": "Edit"
+              }
+            ]
+          }
+        ],
+        "short": "H3",
+        "summary": "Small release-safe H3 starter pack with five alien Cast examples and neutral filmmaking presets.",
+        "format": "MiniMax H3 structured prompt starters",
+        "description": "Editable starter content for MiniMax H3 Creator Palette. Everything can be edited, deleted, imported or replaced from the pack system."
+      },
+      {
+        "id": "prompt-palette-syntax",
+        "name": "Prompt Palette Syntax",
+        "short": "SYNTAX",
+        "kind": "Prompt Palette",
+        "accent": "#78b58b",
+        "summary": "Short examples for Prompt Palette wildcard syntax inside MiniMax Creator Pal.",
+        "format": "Insert an example, preview it, and swap in your own categories or wildcards.",
+        "categories": [
+          {
+            "id": "choices",
+            "name": "Inline Choices",
+            "visual": "text",
+            "description": "Seeded, unseeded, and weighted choice examples.",
+            "prompts": [
+              {
+                "id": "syn-1",
+                "title": "Seeded choice",
+                "prompt": "Cinematic portrait, {soft daylight|warm tungsten|cool fluorescent}, clean background.",
+                "note": "Plain braces pick one option using the node seed.",
+                "visual": "lighting",
+                "subcategory": "Random"
+              },
+              {
+                "id": "syn-2",
+                "title": "Unseeded choice",
+                "prompt": "Street scene, {*light drizzle|gentle wind|passing traffic}, natural ambience.",
+                "note": "The * modifier ignores the node seed.",
+                "visual": "motion",
+                "subcategory": "Random"
+              },
+              {
+                "id": "syn-3",
+                "title": "Weighted choice",
+                "prompt": "Camera move, {~4 static tripod|~2 slow dolly in|~1 handheld push forward}.",
+                "note": "The ~ modifier biases the odds.",
+                "visual": "camera",
+                "subcategory": "Weighted"
+              }
+            ]
+          },
+          {
+            "id": "wildcards",
+            "name": "Wildcard Paths",
+            "visual": "folder",
+            "description": "Wildcard path examples for your My Library folders.",
+            "prompts": [
+              {
+                "id": "syn-4",
+                "title": "Simple wildcard",
+                "prompt": "__characters/lead__, __locations/city__, cinematic audio bed.",
+                "note": "Pulls one entry from each wildcard file.",
+                "visual": "folder",
+                "subcategory": "Paths"
+              },
+              {
+                "id": "syn-5",
+                "title": "Sequential wildcard",
+                "prompt": "__+camera/moves__, clean daylight.",
+                "note": "Advances through the file one line at a time.",
+                "visual": "rotation",
+                "subcategory": "Paths"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "sources": [
+      "MiniMax H3 Creator Palette release starter pack"
+    ]
+  },
+  "cast": [
+    {
+      "id": "Orin_Vex",
+      "handle": "Orin_Vex",
+      "name": "Orin Vex",
+      "group": "Alien Examples",
+      "description": "Fictional adult amphibious alien science officer with smooth teal skin, subtle gill ridges, large dark eyes, long dexterous fingers, and a calm analytical presence. Keep the same non-human facial structure, skin markings and proportions across shots.",
+      "note": "Simple reusable alien science character.",
+      "clothing": "a clean charcoal exploration uniform with practical pockets and a compact instrument harness"
+    },
+    {
+      "id": "Tala_Quill",
+      "handle": "Tala_Quill",
+      "name": "Tala Quill",
+      "group": "Alien Examples",
+      "description": "Fictional adult lavender-skinned alien navigator with four symmetrical eyes, a narrow elegant face, short swept-back cranial fins, and a tall slim silhouette. Keep the same four-eye layout, fin shape and markings across shots.",
+      "note": "Simple reusable alien navigator.",
+      "clothing": "a fitted navy navigation jacket with soft shoulder panels and simple utility trousers"
+    },
+    {
+      "id": "Bronn_Kest",
+      "handle": "Bronn_Kest",
+      "name": "Bronn Kest",
+      "group": "Alien Examples",
+      "description": "Fictional adult stone-skinned alien mechanic with broad shoulders, layered slate-gray skin plates, warm amber eyes, and heavy three-fingered hands. Keep the same plate pattern, eye color and body proportions across shots.",
+      "note": "Simple reusable alien mechanic.",
+      "clothing": "a worn practical mechanic vest over a durable work suit with tool loops"
+    },
+    {
+      "id": "Nemi_Sol",
+      "handle": "Nemi_Sol",
+      "name": "Nemi Sol",
+      "group": "Alien Examples",
+      "description": "Fictional adult translucent golden alien diplomat with softly glowing internal patterns, smooth elongated features, and a graceful upright posture. Keep the same luminous pattern map and facial proportions across shots.",
+      "note": "Simple reusable alien diplomat.",
+      "clothing": "a minimalist dark formal wrap with a single metallic clasp"
+    },
+    {
+      "id": "Pip_Rook",
+      "handle": "Pip_Rook",
+      "name": "Pip Rook",
+      "group": "Alien Examples",
+      "description": "Fictional adult small fuzzy alien engineer with moss-green fur, oversized triangular ears, bright copper eyes, and compact agile proportions. Keep the same fur markings, ear shape and scale across shots.",
+      "note": "Simple reusable small alien engineer.",
+      "clothing": "a tiny rust-colored utility vest with miniature tools and protective gloves"
+    }
+  ],
+  "meta": {
+    "purpose": "Small neutral community starter examples",
+    "author": "z3rofeels",
+    "license": "GPL-3.0-only"
+  }
+}

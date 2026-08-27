@@ -1,0 +1,91 @@
+name: Bug report
+description: Report a reproducible Creator Palette problem
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Creator Palette. Remove private prompts, file paths, API keys, and personal media before attaching anything.
+  - type: input
+    id: version
+    attributes:
+      label: Creator Palette version
+      placeholder: "3.14.1"
+    validations:
+      required: true
+  - type: input
+    id: comfy
+    attributes:
+      label: ComfyUI and frontend versions
+      description: Include the ComfyUI commit/version, frontend version, and whether you use Nodes 1 or Nodes 2.
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: System
+      placeholder: "Windows 11, Python 3.12, NVIDIA RTX 4090 24 GB"
+    validations:
+      required: true
+  - type: dropdown
+    id: node
+    attributes:
+      label: Affected node
+      options:
+        - MiniMax H3 Creator Palette
+        - MiniMax H3 PreStage
+        - Both
+        - Install or startup
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Exact reproduction steps
+      description: Start from a new workflow when possible. Include the control values and what you clicked.
+      placeholder: |
+        1. Add Creator Palette
+        2. Set ...
+        3. Queue ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Browser console and ComfyUI log
+      description: Paste the relevant error and surrounding lines. Do not paste secrets or your entire system environment.
+      render: shell
+  - type: textarea
+    id: workflow
+    attributes:
+      label: Sanitized workflow or screenshots
+      description: Drag files here. Remove private prompts, local usernames, media, model paths, and metadata first.
+  - type: textarea
+    id: optional
+    attributes:
+      label: Optional custom nodes involved
+      description: List GGUF, MultiGPU, KJNodes, cache, attention, or H3 optimization packs if the failing feature uses them.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I reproduced this on the current Creator Palette release.
+          required: true
+        - label: I removed private prompts, personal media, credentials, and identifying paths.
+          required: true
+        - label: I am not requesting model weights or third-party downloads from this repository.
+          required: true

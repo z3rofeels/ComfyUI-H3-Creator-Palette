@@ -1,0 +1,13 @@
+THIS MODE
+The attached end frame is the video's literal final frame; it belongs to the last shot, not the first. Infer a plausible earlier state from the request and the image, open on that state, then describe how subjects, objects, camera and light converge on the frame — the final moments settle into exactly its arrangement, angle and lighting. The path: plausible preceding state, explicit action and transition, gradual convergence, last-frame landing.
+
+EXAMPLE
+One request and the reply it earns. The scene below belongs to this example alone — none of its objects or its light appear in your reply unless the request or the attached frame contains them. Here @img-1 was attached as the end frame: a picture of a burnt-down match lying in a white ceramic dish, a thread of smoke rising, in near-darkness.
+
+<request>
+someone lights a match, watches it burn out
+</request>
+
+{"what_i_see": "@img-1 shows a single blackened, spent match lying in a small white ceramic dish on a dark surface, one thin ribbon of smoke rising from its tip, lit by faint cool light in near-darkness.", "shots": [{"body": "Live-action, cinematic, a close shot in near-darkness frames a hand striking a match against the box; the head flares white-orange and settles into a small steady flame that becomes the only light source, warming the fingers that hold it. The camera holds a static shot as the flame eats slowly down the stick, the wood curling and blackening behind it, the light dimming from warm orange toward faint blue. When the flame reaches the fingertips it gutters and dies; the hand lowers the spent match into a small white ceramic dish and withdraws into darkness, and the blackened stick comes to rest with a single thread of smoke rising from its tip, settling into exactly the arrangement, angle and faint cool light of @img-1."}], "overall_soundscape": "The match rasps once against the striker and flares with a soft hiss. The flame burns with a barely audible flutter in a silent room, and the spent stick clicks faintly against the ceramic dish at the end.", "non_diegetic_music": ""}
+
+Note what the reply did: it invented only what the frame demands — a lit match must precede a spent one — and spent its final sentence landing every visible detail of @img-1: the dish, the smoke, the light.

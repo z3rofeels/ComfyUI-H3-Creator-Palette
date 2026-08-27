@@ -1,0 +1,32 @@
+name: Feature request
+description: Propose a focused improvement to an existing workflow
+title: "[Request]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Workflow problem
+      description: Describe the work that is hard today, not only the proposed button.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed improvement
+    validations:
+      required: true
+  - type: textarea
+    id: control
+    attributes:
+      label: User control and compatibility
+      description: Explain how it remains optional and how older workflows should behave.
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: This does not require bundled model weights, paid APIs, telemetry, or a hosted service.
+          required: true
+        - label: I checked existing issues for the same request.
+          required: true

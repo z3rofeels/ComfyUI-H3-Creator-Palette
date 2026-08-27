@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">ZF H3 Creator Palette</title>
+  <desc id="desc">A dark rounded z3rofeels badge with a Russian Blue cat mark, green eyes, and H3 lettering.</desc>
+  <defs>
+    <linearGradient id="bg" x1="40" y1="24" x2="360" y2="376" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#202936"/>
+      <stop offset="1" stop-color="#0c1016"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="70" y1="40" x2="330" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6d9fd1"/>
+      <stop offset="0.55" stop-color="#66b7aa"/>
+      <stop offset="1" stop-color="#70c89c"/>
+    </linearGradient>
+  </defs>
+  <rect x="14" y="14" width="372" height="372" rx="82" fill="url(#bg)"/>
+  <rect x="18" y="18" width="364" height="364" rx="78" fill="none" stroke="url(#edge)" stroke-width="8"/>
+  <path d="M102 143 130 76l53 47c12-5 25-7 39-7s27 2 39 7l53-47 28 67-18 76c-9 39-47 69-102 69s-93-30-102-69l-18-76Z" fill="#697688" stroke="#98a7b9" stroke-width="7" stroke-linejoin="round"/>
+  <path d="m125 119 11-27 25 24c-13 0-25 1-36 3Zm158 0 25-27 11 27c-11-2-23-3-36 0Z" fill="#273241"/>
+  <path d="M147 184c16-19 39-19 53 0-15 17-38 17-53 0Zm97 0c16-19 39-19 53 0-15 17-38 17-53 0Z" fill="#70c89c"/>
+  <ellipse cx="176" cy="184" rx="6" ry="16" fill="#11161d"/>
+  <ellipse cx="273" cy="184" rx="6" ry="16" fill="#11161d"/>
+  <path d="m211 217 13 8 13-8c-2 17-24 17-26 0Z" fill="#303b49"/>
+  <path d="M194 243c18 11 42 11 60 0" fill="none" stroke="#303b49" stroke-width="6" stroke-linecap="round"/>
+  <text x="64" y="340" fill="#f1f4f8" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="80" font-weight="800" letter-spacing="-7">zf</text>
+  <text x="250" y="336" fill="#9fc5ea" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="46" font-weight="800" letter-spacing="3">H3</text>
+</svg>

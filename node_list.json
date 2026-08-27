@@ -1,0 +1,4 @@
+{
+  "Z3MiniMaxH3CreatorV3": "Complete local MiniMax H3 creator with Prompt Palette, references, timeline, cast, LoRAs, refine, pre-stage, sampling and save",
+  "Z3MiniMaxH3PreStage": "Prompt Palette-backed local still generator with Image Lab review, curation and explicit Creator handoff"
+}
